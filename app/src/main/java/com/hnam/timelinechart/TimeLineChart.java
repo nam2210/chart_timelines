@@ -18,36 +18,14 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hnam.timelinechart.TimeLineConstant.*;
+
 /**
  * Created by nampham on 7/17/17.
  */
 
 public class TimeLineChart extends View {
     private static final String TAG = TimeLineChart.class.getSimpleName();
-
-    public static final int DEFAULT_DEVICE_WIDTH = 1080;
-
-    //default position we will draw first column when device width = default device width
-    private static final int DEFAULT_FIRST_X = 200;
-
-    //width of columns = 2 * DEFAULT_D
-    private static final int DEFAULT_D = 72;
-
-    //spacing between 2 columns
-    private static final int DEFAULT_X = 24;
-
-    //spacing
-    private static final int DEFAULT_SPACING_16 = 16;
-
-    //spacing
-    private static final int DEFAULT_SPACING_8 = 8;
-
-    private static final int DEFAULT_SPACING_4 = 4;
-
-    private static final int DEFAULT_SPACING_6 = 6;
-
-    //interval of day -> 24 hour
-    private static final int INTERVAL = 24;
 
     private int firstX;
     private int defaultD;
@@ -60,9 +38,9 @@ public class TimeLineChart extends View {
         prepareHeight(context);
         prepareListener();
 
-        //todo prepare data
-        prepareData();
-        prepareTimelines();
+        //prepare data for testing
+        //prepareData();
+        //prepareTimelines();
     }
 
     public TimeLineChart(Context context, @Nullable AttributeSet attrs) {
@@ -70,9 +48,9 @@ public class TimeLineChart extends View {
         prepareHeight(context);
         prepareListener();
 
-        //todo prepare data
-        prepareData();
-        prepareTimelines();
+        //prepare data for testing
+        //prepareData();
+        //prepareTimelines();
     }
 
     public TimeLineChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -211,52 +189,6 @@ public class TimeLineChart extends View {
     Rect bounds = new Rect();
     private void drawTimeLines(Canvas canvas){
         // draw vertical lines
-//        canvas.restore();
-//        canvas.save();
-//        for (int i = 0; i < INTERVAL + 1; i++) {
-//            int startX = firstX;
-//            int startY = i * height / INTERVAL + getPaddingTop() * 2;
-//            int stopY = height/ INTERVAL;
-//            canvas.drawLine(startX, startY, startX, stopY, paintLine);
-//        }
-//
-//        // draw point
-//        canvas.restore();
-//        canvas.save();
-//        for (Point point : points) {
-//            point.setCoordinates(200, height);
-//            if (point instanceof CirclePoint) {
-//                //draw circle
-//                paintCircle.setColor(point.getColorId());
-//                canvas.drawCircle(point.getX(), point.getY() + getPaddingTop() * 2, point.getRadius(), paintCircle);
-//
-//                //draw text
-//                paintText.setColor(Color.BLACK);
-//                paintText.getTextBounds(point.getTimeInText(), 0, point.getTimeInText().length(), bounds);
-//                int height = bounds.height();
-//                int xBaseline = point.getX() + (int) (DEFAULT_SPACING_6 * density);
-//                int yBaseline = point.getY() + getPaddingTop() * 2 + height / 2;
-//
-//                canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintText);
-//            } else if (point instanceof LinePoint) {
-//                //draw line
-//                int startX = point.getX() - 8;
-//                int startY = point.getY() + getPaddingTop() * 2;
-//                int stopX = point.getX() + 8;
-//                int stopY = startY;
-//                canvas.drawLine(startX, startY, stopX, stopY, paintLine);
-//
-//                //draw text
-//                paintTextSchedules.getTextBounds(point.getTimeInText(), 0, point.getTimeInText().length(), bounds);
-//                //paintText.setColor(point.getColorId());
-//                int height = bounds.height();
-//                float width = paintText.measureText(point.getTimeInText());
-//                int xBaseline = point.getX() - (int)width - (int)(DEFAULT_SPACING_8 * density); // 16
-//                int yBaseline = point.getY() + getPaddingTop() * 2 + height / 2;
-//                canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintTextSchedules);
-//            }
-//        }
-
         for (int i = 0; i < timelines.size(); i++){
             int xPosition = firstX * (i + 1);
             List<Point> p = timelines.get(i);
@@ -386,6 +318,10 @@ public class TimeLineChart extends View {
         postInvalidate();
     }
 
+    public void addTimeLines(List<List<Point>> timelines){
+        this.timelines.addAll(timelines);
+        postInvalidate();
+    }
 
     /** =============
      * handle gesture

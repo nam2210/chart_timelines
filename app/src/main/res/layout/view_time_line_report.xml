@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.hnam.timelinechart.TimeLineTitle
+        android:id="@+id/timeline_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
+
+    <ScrollView
+        android:id="@+id/timeline_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.hnam.timelinechart.TimeLineChart
+            android:id="@+id/timeline_chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp" />
+    </ScrollView>
+</merge>

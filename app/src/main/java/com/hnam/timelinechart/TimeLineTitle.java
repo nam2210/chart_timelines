@@ -1,16 +1,16 @@
 package com.hnam.timelinechart;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.*;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
-import java.util.List;
+import static com.hnam.timelinechart.TimeLineConstant.*;
 
 /**
  * Created by nampham on 7/19/17.
@@ -18,14 +18,26 @@ import java.util.List;
 
 public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
     private static final String TAG = TimeLineTitle.class.getSimpleName();
+    int deviceWidth;
+    int firstX = 0;
 
     public TimeLineTitle(Context context) {
         super(context);
+        init(context);
 
     }
 
     public TimeLineTitle(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
+        final Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        android.graphics.Point deviceDisplay = new android.graphics.Point();
+        display.getSize(deviceDisplay);
+        deviceWidth = deviceDisplay.x;
+        firstX = (deviceWidth * DEFAULT_FIRST_X) / DEFAULT_DEVICE_WIDTH;
     }
 
     @Override
@@ -40,14 +52,12 @@ public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
         final int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
         final int childWidth = childRight - childLeft;
         final int childHeight = childBottom - childTop;
-        curLeftPos = 200 + childLeft;
+        curLeftPos = firstX + childLeft;
 
         for (int i = 0; i < count; i++){
             View child = getChildAt(i);
             int vcWidth = child.getMeasuredWidth();
             int vcHeight = child.getMeasuredHeight();
-            Log.e(TAG, ">>> childWidth: " + vcWidth);
-            Log.e(TAG, ">>> childHeight: " + vcHeight);
             child.layout((i+1)*curLeftPos - vcWidth/2, childTop, (i+1)*curLeftPos + vcWidth/2, childTop + vcHeight);
             child.setOnClickListener(this);
         }
@@ -71,8 +81,6 @@ public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
 
             maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
-            Log.e(TAG, "max Height-- " + child.getMeasuredHeight());
-            Log.e(TAG, "max witdh-- " + child.getMeasuredWidth());
             childState = combineMeasuredStates(childState, child.getMeasuredState());
         }
 
@@ -86,6 +94,6 @@ public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-
+        Log.e(TAG,"click here>>>>>");
     }
 }

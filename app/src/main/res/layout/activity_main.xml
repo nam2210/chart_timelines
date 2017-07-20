@@ -14,23 +14,10 @@
     <!--</LinearLayout>-->
 
     <com.hnam.timelinechart.TimeLineTitle
+        android:id="@+id/timeline_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="32dp"
-            android:layout_height="20dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="abc"/>
-
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="32dp"
-            android:layout_height="20dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="defqwwwww"/>
-
-    </com.hnam.timelinechart.TimeLineTitle>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"/>
 
     <ScrollView
         android:layout_width="match_parent"
