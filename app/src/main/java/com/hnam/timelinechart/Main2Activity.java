@@ -4,6 +4,11 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.hnam.tlchart.CirclePoint;
+import com.hnam.tlchart.LinePoint;
+import com.hnam.tlchart.Point;
+import com.hnam.tlchart.TimeLineReportView;
+
 import java.util.ArrayList;
 import java.util.List;
 

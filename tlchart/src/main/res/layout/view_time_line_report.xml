@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.hnam.timelinechart.TimeLineTitle
+    <com.hnam.tlchart.TimeLineTitle
         android:id="@+id/timeline_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.hnam.timelinechart.TimeLineChart
+        <com.hnam.tlchart.TimeLineChart
             android:id="@+id/timeline_chart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

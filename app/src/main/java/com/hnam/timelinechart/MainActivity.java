@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hnam.tlchart.TimeLineTitle;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

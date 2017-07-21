@@ -13,7 +13,7 @@
 
     <!--</LinearLayout>-->
 
-    <com.hnam.timelinechart.TimeLineTitle
+    <com.hnam.tlchart.TimeLineTitle
         android:id="@+id/timeline_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.hnam.timelinechart.TimeLineChart
+        <com.hnam.tlchart.TimeLineChart
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp" />
