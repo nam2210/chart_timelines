@@ -12,13 +12,21 @@ import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hnam.tlchart.TimeLineConstant.*;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_D;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_DEVICE_WIDTH;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_FIRST_X;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_16;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_6;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_8;
+import static com.hnam.tlchart.TimeLineConstant.DEFAULT_X;
+import static com.hnam.tlchart.TimeLineConstant.INTERVAL;
 
 /**
  * Created by nampham on 7/17/17.
@@ -87,6 +95,7 @@ public class TimeLineChart extends View {
 
     int width = 0;
     int height = 0;
+    private int defaultHeight = 0;
 
     Paint paint = new Paint();
     Paint paintText = new Paint();
@@ -103,6 +112,7 @@ public class TimeLineChart extends View {
         //newHeight = height - height of toolbar - height of padding
         density = TimeLineUtils.density(context);
         height = size.y - (int) (81 * density) - (int) (32 * density);
+        defaultHeight = height;
     }
 
     private void prepareParameters(int width) {
@@ -156,7 +166,7 @@ public class TimeLineChart extends View {
     }
 
 
-    private void drawChart(Canvas canvas){
+    private void drawChart(Canvas canvas) {
         canvas.save();
         for (int i = 0; i < INTERVAL; i++) {
             String text = String.valueOf(i) + ":00";
@@ -170,14 +180,14 @@ public class TimeLineChart extends View {
 
         for (int i = 0; i < INTERVAL + 1; i++) {
             //draw vertical lines
-            int verticalStartX = getPaddingLeft() + (int)(21 * density); //64
+            int verticalStartX = getPaddingLeft() + (int) (21 * density); //64
             int verticalStartY = (i * height / INTERVAL) + getPaddingTop() * 2;
             int verticalStopX = verticalStartX;
             int verticalStopY = height / INTERVAL;
             canvas.drawLine(verticalStartX, verticalStartY, verticalStopX, verticalStopY, paint);
 
             //draw horizontal line
-            int hStartX = getPaddingLeft() + (int)(21 * density);//64
+            int hStartX = getPaddingLeft() + (int) (21 * density);//64
             int hStartY = (i * height / INTERVAL) + getPaddingTop() * 2;
             int hStopX = width;
             int hStopY = hStartY;
@@ -187,9 +197,10 @@ public class TimeLineChart extends View {
 
     //draw time line
     Rect bounds = new Rect();
-    private void drawTimeLines(Canvas canvas){
+
+    private void drawTimeLines(Canvas canvas) {
         // draw vertical lines
-        for (int i = 0; i < timelines.size(); i++){
+        for (int i = 0; i < timelines.size(); i++) {
             int xPosition = firstX * (i + 1);
             List<Point> p = timelines.get(i);
 
@@ -199,14 +210,14 @@ public class TimeLineChart extends View {
             for (int j = 0; j < INTERVAL + 1; j++) {
                 int startX = xPosition;
                 int startY = j * height / INTERVAL + getPaddingTop() * 2;
-                int stopY = height/ INTERVAL;
+                int stopY = height / INTERVAL;
                 canvas.drawLine(startX, startY, startX, stopY, paintLine);
             }
 
             // draw point
             canvas.restore();
             canvas.save();
-            for (Point point : p){
+            for (Point point : p) {
                 point.setCoordinates(xPosition, height);
                 if (point instanceof CirclePoint) {
                     //draw circle
@@ -233,7 +244,7 @@ public class TimeLineChart extends View {
                     paintTextSchedules.getTextBounds(point.getTimeInText(), 0, point.getTimeInText().length(), bounds);
                     int height = bounds.height();
                     float width = paintText.measureText(point.getTimeInText());
-                    int xBaseline = point.getX() - (int)width - (int)(DEFAULT_SPACING_8 * density); // 16
+                    int xBaseline = point.getX() - (int) width - (int) (DEFAULT_SPACING_8 * density); // 16
                     int yBaseline = point.getY() + getPaddingTop() * 2 + height / 2;
                     canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintTextSchedules);
                 }
@@ -244,6 +255,7 @@ public class TimeLineChart extends View {
 
     List<List<Point>> timelines = new ArrayList<>();
     List<Point> points;
+
     private void prepareData() {
         points = new ArrayList<>();
         points.add(new CirclePoint(0, 0, ""));
@@ -276,7 +288,7 @@ public class TimeLineChart extends View {
         }
     }
 
-    private void prepareTimelines(){
+    private void prepareTimelines() {
         List<Point> ps = new ArrayList<>();
         ps.add(new CirclePoint(0, 0, ""));
         ps.add(new CirclePoint(1, 30, ""));
@@ -313,30 +325,36 @@ public class TimeLineChart extends View {
         timelines.add(p2);
     }
 
-    public void addTimeLine(List<Point> timeline){
+    public void addTimeLine(List<Point> timeline) {
         this.timelines.add(timeline);
         postInvalidate();
     }
 
-    public void addTimeLines(List<List<Point>> timelines){
+    public void addTimeLines(List<List<Point>> timelines) {
         this.timelines.addAll(timelines);
         postInvalidate();
     }
 
-    /** =============
+    /**
+     * =============
      * handle gesture
      * ==============
      */
-    GestureDetector gestureDetector;
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector mScaleDetector;
+
     private void prepareListener() {
-        gestureDetector = new GestureDetector(this.getContext(), new TapGesture());
+        //gestureDetector = new GestureDetector(this.getContext(), new TapGesture());
+        mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
+
     }
 
     float scale = 1f;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+        mScaleDetector.onTouchEvent(event);
+        return true;
     }
 
 
@@ -372,6 +390,54 @@ public class TimeLineChart extends View {
         }
     }
 
+    private float factor = 1;
 
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            //scale *= detector.getScaleFactor();
 
+            // Don't let the object get too small or too large.
+            //scale = Math.max(1f, Math.min(scale, 15.0f));
+            float factor = detector.getScaleFactor();
+            if (factor > 1){
+                if (scale <= 10) {
+                    scale *= 1.01;
+                    height *= 1.01;
+                }
+            } else if (factor < 1){
+                if (scale > 1) {
+                    float previousScale = scale;
+                    scale /= 1.01;
+                    height = Math.round((scale * height) / previousScale);
+                } else if (scale == 1){
+                    height = defaultHeight;
+                }
+            }
+            requestLayout();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            onScaleListener.onScaleBegin();
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            onScaleListener.onScaleEnd();
+        }
+    }
+
+    private OnScaleListener onScaleListener = null;
+
+    public void setOnScaleListener(OnScaleListener onScaleListener) {
+        this.onScaleListener = onScaleListener;
+    }
+
+    public interface OnScaleListener {
+        void onScaleBegin();
+        void onScaleEnd();
+    }
 }

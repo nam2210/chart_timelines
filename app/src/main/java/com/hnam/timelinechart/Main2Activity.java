@@ -27,8 +27,8 @@ public class Main2Activity extends AppCompatActivity {
 
     private void prepareTimeLinesTitle(){
         List<String> titles = new ArrayList<>();
-        titles.add("abc");
-        titles.add("abcde");
+        titles.add("abcdefghijklm");
+        titles.add("abcdefghijklm");
         reportView.setTimeLineTitle(titles);
     }
 

@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class TimeLineReportView extends LinearLayout {
 
     private TimeLineTitle timeLineTitle;
     private TimeLineChart timeLineChart;
+    private ScrollView scrollView;
 
     public TimeLineReportView(Context context) {
         super(context);
@@ -30,7 +32,8 @@ public class TimeLineReportView extends LinearLayout {
     }
 
     private float density = 0;
-    private void init(Context context){
+
+    private void init(Context context) {
         setOrientation(LinearLayout.VERTICAL);
 
         LayoutInflater inflater = (LayoutInflater) context
@@ -45,19 +48,37 @@ public class TimeLineReportView extends LinearLayout {
         super.onFinishInflate();
         timeLineTitle = (TimeLineTitle) this.findViewById(R.id.timeline_title);
         timeLineChart = (TimeLineChart) this.findViewById(R.id.timeline_chart);
+        scrollView = (ScrollView) findViewById(R.id.timeline_scrollView);
+        timeLineChart.setOnScaleListener(new TimeLineChart.OnScaleListener() {
+            @Override
+            public void onScaleBegin() {
+                scrollView.requestDisallowInterceptTouchEvent(true);
+            }
+
+            @Override
+            public void onScaleEnd() {
+                scrollView.requestDisallowInterceptTouchEvent(false);
+            }
+        });
     }
 
+    private static final int TEXT_HEIGHT = 16;
+    private static final int TEXT_WIDTH = 48;
+    private static final int TEXT_SIZE = 12;
+
     //set timeline title
-    public void setTimeLineTitle(List<String> titles){
-        if (titles == null){
+    public void setTimeLineTitle(List<String> titles) {
+        if (titles == null) {
             return;
         }
-        for (int i = 0; i < titles.size(); i++){
+
+        for (int i = 0; i < titles.size(); i++) {
             TextView tv = new TextView(getContext());
             ViewGroup.LayoutParams params =
-                    new ViewGroup.LayoutParams((int)(32*density), (int)(14 *density));
+                    new ViewGroup.LayoutParams((int) (TEXT_WIDTH * density),
+                            (int) (TEXT_HEIGHT * density));
             tv.setLayoutParams(params);
-            tv.setTextSize(10);
+            tv.setTextSize(TEXT_SIZE);
             tv.setMaxLines(1);
             tv.setEllipsize(TextUtils.TruncateAt.END);
             tv.setText(titles.get(i));
@@ -66,8 +87,8 @@ public class TimeLineReportView extends LinearLayout {
     }
 
     //set timeline points
-    public void setTimeLinePoints(List<List<Point>> listOfPoints){
-        if (listOfPoints == null){
+    public void setTimeLinePoints(List<List<Point>> listOfPoints) {
+        if (listOfPoints == null) {
             return;
         }
         timeLineChart.addTimeLines(listOfPoints);
