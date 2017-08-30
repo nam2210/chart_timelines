@@ -390,8 +390,6 @@ public class TimeLineChart extends View {
         }
     }
 
-    private float factor = 1;
-
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
