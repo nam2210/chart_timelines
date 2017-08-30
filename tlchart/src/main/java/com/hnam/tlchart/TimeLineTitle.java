@@ -8,6 +8,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import static com.hnam.tlchart.TimeLineConstant.*;
 
@@ -52,6 +53,7 @@ public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
         final int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
         final int childWidth = childRight - childLeft;
         final int childHeight = childBottom - childTop;
+        firstX = deviceWidth / (count + 1);
         curLeftPos = firstX + childLeft;
 
         for (int i = 0; i < count; i++){
@@ -94,6 +96,22 @@ public class TimeLineTitle extends ViewGroup implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Log.e(TAG,"click here>>>>>");
+        if (v instanceof TextView){
+            String value = ((TextView) v).getText().toString();
+            if (listener != null){
+                Log.e(TAG,"click here>>>>>: " + value);
+                listener.onTitleClick(value);
+            }
+        }
+    }
+
+    private OnTimeLineTitleListener listener;
+
+    public void setOnTimelineTitleListener(OnTimeLineTitleListener listener){
+        this.listener = listener;
+    }
+
+    public interface OnTimeLineTitleListener {
+        void onTitleClick(String msg);
     }
 }

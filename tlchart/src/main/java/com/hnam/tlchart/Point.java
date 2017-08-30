@@ -11,7 +11,6 @@ public abstract class Point {
     private int x;
     private int y;
     private int colorId;
-    private int radius;
 
     private int hour;
     private int minute;
@@ -21,7 +20,6 @@ public abstract class Point {
         this.hour = hour;
         this.minute = minute;
         this.description = description;
-        this.radius = 12;
     }
 
     public int getX() {
@@ -61,9 +59,9 @@ public abstract class Point {
         this.y = (heightOfTimeline * (hour * 60 + minute)) / MAX_OFFSET;
     }
 
-    public int getRadius() {
-        return radius;
-    }
+//    public int getRadius() {
+//        return radius;
+//    }
 
     public String getTimeInText(){
         String result = String.valueOf(hour) + ":";
@@ -73,6 +71,24 @@ public abstract class Point {
             result += String.valueOf(minute);
         }
         return result;
+    }
+
+//    public String getDescription(){
+//        String time;
+//        if (description != null && !description.isEmpty()){
+//            time = getTimeInText() + "\n" + description;
+//        } else {
+//            time = getTimeInText();
+//        }
+//        return time;
+//    }
+
+    public boolean isDescriptionEmpty(){
+        return description == null || description == "";
+    }
+
+    public String getDescription(){
+        return description;
     }
 
 

@@ -19,14 +19,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_D;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_DEVICE_WIDTH;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_FIRST_X;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_16;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_6;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_SPACING_8;
-import static com.hnam.tlchart.TimeLineConstant.DEFAULT_X;
-import static com.hnam.tlchart.TimeLineConstant.INTERVAL;
+import static com.hnam.tlchart.TimeLineConstant.*;
 
 /**
  * Created by nampham on 7/17/17.
@@ -34,6 +27,7 @@ import static com.hnam.tlchart.TimeLineConstant.INTERVAL;
 
 public class TimeLineChart extends View {
     private static final String TAG = TimeLineChart.class.getSimpleName();
+
 
     private int firstX;
     private int defaultD;
@@ -47,8 +41,8 @@ public class TimeLineChart extends View {
         prepareListener();
 
         //prepare data for testing
-        //prepareData();
-        //prepareTimelines();
+        prepareData();
+        prepareTimelines();
     }
 
     public TimeLineChart(Context context, @Nullable AttributeSet attrs) {
@@ -69,7 +63,8 @@ public class TimeLineChart extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int w = getPaddingLeft() + getPaddingRight() + getMinimumWidth();
-        int h = height + (int) (32 * TimeLineUtils.density(getContext()));
+        //int h = height + (int) (DEFAULT_SPACING_32 * TimeLineUtils.density(getContext()));
+        int h = height + (int) (DEFAULT_SPACING_32 * density);
 
         // Width and height to determine the final view through a systematic approach to decision-making
         int widthSize = resolveSizeAndState(w, widthMeasureSpec, 0);
@@ -122,6 +117,7 @@ public class TimeLineChart extends View {
         spacing = (width * DEFAULT_SPACING_16) / DEFAULT_DEVICE_WIDTH;
     }
 
+
     private void prepareDrawables() {
         paint.setAntiAlias(true);
         paint.setStrokeWidth(2f);
@@ -130,11 +126,11 @@ public class TimeLineChart extends View {
         paint.setStrokeJoin(Paint.Join.ROUND);
 
         paintText.setColor(Color.BLACK);
-        paintText.setTextSize(20);
+        paintText.setTextSize(FONT_SIZE_10 * density);
         paintText.setAntiAlias(true);
 
         paintTextSchedules.setColor(Color.parseColor("#FF9800"));
-        paintTextSchedules.setTextSize(22);
+        paintTextSchedules.setTextSize(FONT_SIZE_8 * density);
         paintTextSchedules.setAntiAlias(true);
         paintTextSchedules.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
@@ -142,7 +138,7 @@ public class TimeLineChart extends View {
 
         paintLine.setAntiAlias(true);
         paintLine.setStrokeWidth(2f);
-        paintLine.setColor(Color.BLUE);
+        paintLine.setColor(Color.parseColor("#81D4FA"));
         paintLine.setStyle(Paint.Style.STROKE);
         paintLine.setStrokeJoin(Paint.Join.ROUND);
 
@@ -168,26 +164,28 @@ public class TimeLineChart extends View {
 
     private void drawChart(Canvas canvas) {
         canvas.save();
+        //draw time line text 0:00 - 23:00
         for (int i = 0; i < INTERVAL; i++) {
             String text = String.valueOf(i) + ":00";
-            int xBaseline = 8 + getPaddingLeft();
+            int xBaseline = getPaddingLeft();
             int yBaseline = (i * height / INTERVAL)
                     + getPaddingTop() * 2
-                    + 20;
+                    + DEFAULT_SPACING_18;
+            paintText.setTextSize(FONT_SIZE_6 * density);
             canvas.drawText(text, xBaseline, yBaseline, paintText);
         }
 
 
         for (int i = 0; i < INTERVAL + 1; i++) {
             //draw vertical lines
-            int verticalStartX = getPaddingLeft() + (int) (21 * density); //64
+            int verticalStartX = getPaddingLeft() + (int) (DEFAULT_SPACING_18 * density); //64
             int verticalStartY = (i * height / INTERVAL) + getPaddingTop() * 2;
             int verticalStopX = verticalStartX;
             int verticalStopY = height / INTERVAL;
             canvas.drawLine(verticalStartX, verticalStartY, verticalStopX, verticalStopY, paint);
 
             //draw horizontal line
-            int hStartX = getPaddingLeft() + (int) (21 * density);//64
+            int hStartX = getPaddingLeft() + (int) (DEFAULT_SPACING_18 * density);//64
             int hStartY = (i * height / INTERVAL) + getPaddingTop() * 2;
             int hStopX = width;
             int hStopY = hStartY;
@@ -200,6 +198,7 @@ public class TimeLineChart extends View {
 
     private void drawTimeLines(Canvas canvas) {
         // draw vertical lines
+        firstX = width / (timelines.size() + 1);
         for (int i = 0; i < timelines.size(); i++) {
             int xPosition = firstX * (i + 1);
             List<Point> p = timelines.get(i);
@@ -222,16 +221,29 @@ public class TimeLineChart extends View {
                 if (point instanceof CirclePoint) {
                     //draw circle
                     paintCircle.setColor(point.getColorId());
-                    canvas.drawCircle(point.getX(), point.getY() + getPaddingTop() * 2, point.getRadius(), paintCircle);
+                    canvas.drawCircle(point.getX(), point.getY() + getPaddingTop() * 2, RADIUS * density, paintCircle);
 
                     //draw text
                     paintText.setColor(Color.BLACK);
+                    paintText.setTextSize(FONT_SIZE_10 * density);
                     paintText.getTextBounds(point.getTimeInText(), 0, point.getTimeInText().length(), bounds);
                     int height = bounds.height();
                     int xBaseline = point.getX() + (int) (DEFAULT_SPACING_6 * density);
                     int yBaseline = point.getY() + getPaddingTop() * 2 + height / 2;
 
-                    canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintText);
+                    if (((CirclePoint) point).isShowTimeText()) {
+                        canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintText);
+                    }
+
+                    if (!point.isDescriptionEmpty()) {
+                        paintText.getTextBounds(point.getDescription(), 0, point.getDescription().length(), bounds);
+                        paintText.setTextSize(FONT_SIZE_8 * density);
+                        height = bounds.height();
+                        xBaseline = point.getX() + (int) (DEFAULT_SPACING_4 * density);
+                        yBaseline = point.getY() + getPaddingTop() * 2 + height / 2 + (int) (DEFAULT_SPACING_6 * density);
+                        canvas.drawText(point.getDescription(), xBaseline, yBaseline, paintText);
+                    }
+
                 } else if (point instanceof LinePoint) {
                     //draw line
                     int startX = point.getX() - 8;
@@ -243,13 +255,134 @@ public class TimeLineChart extends View {
                     //draw text
                     paintTextSchedules.getTextBounds(point.getTimeInText(), 0, point.getTimeInText().length(), bounds);
                     int height = bounds.height();
-                    float width = paintText.measureText(point.getTimeInText());
-                    int xBaseline = point.getX() - (int) width - (int) (DEFAULT_SPACING_8 * density); // 16
+                    float width = paintTextSchedules.measureText(point.getTimeInText());
+                    int xBaseline = point.getX() - (int) width - (int) (DEFAULT_SPACING_4 * density);
                     int yBaseline = point.getY() + getPaddingTop() * 2 + height / 2;
                     canvas.drawText(point.getTimeInText(), xBaseline, yBaseline, paintTextSchedules);
                 }
             }
         }
+    }
+
+
+    //List<List<Point>> timelines = new ArrayList<>();
+
+    public void addTimeLine(List<Point> timeline) {
+        this.timelines.add(timeline);
+        postInvalidate();
+    }
+
+    public void setTimeLines(List<List<Point>> timelines) {
+        this.timelines.clear();
+        this.timelines.addAll(timelines);
+        postInvalidate();
+    }
+
+
+    /**
+     * =============
+     * handle gesture
+     * ==============
+     */
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector mScaleDetector;
+
+    private void prepareListener() {
+        //gestureDetector = new GestureDetector(this.getContext(), new TapGesture());
+        mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
+    }
+
+    float scale = 1f;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //return gestureDetector.onTouchEvent(event);
+        mScaleDetector.onTouchEvent(event);
+        return true;
+    }
+
+
+    private class TapGesture extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Log.e(TAG, "double tap");
+            if (scale <= 16) {
+                scale *= 1.25;
+                height *= 1.25;
+                requestLayout();
+            }
+
+            return super.onDoubleTap(e);
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.e(TAG, "single tap");
+            if (scale > 1) {
+                float previousScale = scale;
+                scale /= 1.25;
+                height = Math.round((scale * height) / previousScale);
+                requestLayout();
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+    }
+
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            //scale *= detector.getScaleFactor();
+
+            // Don't let the object get too small or too large.
+            //scale = Math.max(1f, Math.min(scale, 15.0f));
+            float factor = detector.getScaleFactor();
+            if (factor > 1) {
+                if (scale <= 10) {
+                    scale *= 1.01;
+                    height *= 1.01;
+                }
+            } else if (factor < 1) {
+                if (scale > 1) {
+                    float previousScale = scale;
+                    scale /= 1.01;
+                    height = Math.round((scale * height) / previousScale);
+                } else if (scale == 1) {
+                    height = defaultHeight;
+                }
+            }
+            requestLayout();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            onScaleListener.onScaleBegin();
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            onScaleListener.onScaleEnd();
+        }
+    }
+
+    private OnScaleListener onScaleListener = null;
+
+    public void setOnScaleListener(OnScaleListener onScaleListener) {
+        this.onScaleListener = onScaleListener;
+    }
+
+    public interface OnScaleListener {
+        void onScaleBegin();
+
+        void onScaleEnd();
     }
 
 
@@ -321,121 +454,14 @@ public class TimeLineChart extends View {
         timelines.add(ps);
         List<Point> p1 = new ArrayList<>(ps);
         List<Point> p2 = new ArrayList<>(ps);
+        List<Point> p3 = new ArrayList<>(ps);
+        List<Point> p4 = new ArrayList<>(ps);
         timelines.add(p1);
         timelines.add(p2);
-    }
-
-    public void addTimeLine(List<Point> timeline) {
-        this.timelines.add(timeline);
-        postInvalidate();
-    }
-
-    public void addTimeLines(List<List<Point>> timelines) {
-        this.timelines.addAll(timelines);
-        postInvalidate();
-    }
-
-    /**
-     * =============
-     * handle gesture
-     * ==============
-     */
-    private GestureDetector gestureDetector;
-    private ScaleGestureDetector mScaleDetector;
-
-    private void prepareListener() {
-        //gestureDetector = new GestureDetector(this.getContext(), new TapGesture());
-        mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
-
-    }
-
-    float scale = 1f;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        mScaleDetector.onTouchEvent(event);
-        return true;
+        timelines.add(p3);
+        timelines.add(p4);
     }
 
 
-    private class TapGesture extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
 
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            Log.e(TAG, "double tap");
-            if (scale <= 2) {
-                scale *= 1.25;
-                height *= 1.25;
-                requestLayout();
-            }
-
-            return super.onDoubleTap(e);
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            Log.e(TAG, "single tap");
-            if (scale > 1) {
-                float previousScale = scale;
-                scale /= 1.25;
-                height = Math.round((scale * height) / previousScale);
-                requestLayout();
-            }
-            return super.onSingleTapConfirmed(e);
-        }
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            //scale *= detector.getScaleFactor();
-
-            // Don't let the object get too small or too large.
-            //scale = Math.max(1f, Math.min(scale, 15.0f));
-            float factor = detector.getScaleFactor();
-            if (factor > 1){
-                if (scale <= 10) {
-                    scale *= 1.01;
-                    height *= 1.01;
-                }
-            } else if (factor < 1){
-                if (scale > 1) {
-                    float previousScale = scale;
-                    scale /= 1.01;
-                    height = Math.round((scale * height) / previousScale);
-                } else if (scale == 1){
-                    height = defaultHeight;
-                }
-            }
-            requestLayout();
-            return true;
-        }
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            onScaleListener.onScaleBegin();
-            return true;
-        }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            onScaleListener.onScaleEnd();
-        }
-    }
-
-    private OnScaleListener onScaleListener = null;
-
-    public void setOnScaleListener(OnScaleListener onScaleListener) {
-        this.onScaleListener = onScaleListener;
-    }
-
-    public interface OnScaleListener {
-        void onScaleBegin();
-        void onScaleEnd();
-    }
 }

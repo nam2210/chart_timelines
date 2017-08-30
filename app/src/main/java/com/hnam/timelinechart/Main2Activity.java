@@ -27,27 +27,30 @@ public class Main2Activity extends AppCompatActivity {
 
     private void prepareTimeLinesTitle(){
         List<String> titles = new ArrayList<>();
-        titles.add("abcdefghijklm");
-        titles.add("abcdefghijklm");
+        titles.add("abcdefghijklmsdfsdfdfdfd");
+        titles.add("abcdefghijklmDFJSDLFJSA");
+        titles.add("qwertyeruotrtrertert");
+        titles.add("asdfdsffgfwererlkflg");
+        titles.add("asdfdsffgfwererlkfla");
         reportView.setTimeLineTitle(titles);
     }
 
     private void prepareTimelinesChart(){
         List<List<Point>> timelines = new ArrayList<>();
         List<Point> ps = new ArrayList<>();
-        ps.add(new CirclePoint(0, 0, ""));
-        ps.add(new CirclePoint(1, 30, ""));
-        ps.add(new CirclePoint(2, 59, ""));
-        ps.add(new LinePoint(3, 5, ""));
-        ps.add(new CirclePoint(3, 5, ""));
-        ps.add(new CirclePoint(4, 10, ""));
-        ps.add(new CirclePoint(4, 3, ""));
-        ps.add(new LinePoint(4, 30, ""));
-        ps.add(new CirclePoint(19, 0, ""));
-        ps.add(new CirclePoint(19, 45, ""));
-        ps.add(new LinePoint(23, 0, ""));
-        ps.add(new CirclePoint(23, 45, ""));
-        ps.add(new CirclePoint(23, 59, ""));
+        ps.add(new CirclePoint(0, 0, "Overdose"));
+        ps.add(new CirclePoint(1, 30, "on time"));
+        ps.add(new CirclePoint(2, 59, "on time"));
+        ps.add(new LinePoint(3, 5, "wrong time"));
+        ps.add(new CirclePoint(3, 5, "wrong time"));
+        ps.add(new CirclePoint(4, 10, "on time"));
+        ps.add(new CirclePoint(4, 3, "wrong time"));
+        ps.add(new LinePoint(4, 30, "on time"));
+        ps.add(new CirclePoint(19, 0, "overdose"));
+        ps.add(new CirclePoint(19, 45, "overdose"));
+        ps.add(new LinePoint(23, 0, "wrong time"));
+        ps.add(new CirclePoint(23, 45, "on time"));
+        ps.add(new CirclePoint(23, 59, "wrong time"));
 
 
         for (Point point : ps) {
@@ -66,8 +69,12 @@ public class Main2Activity extends AppCompatActivity {
         timelines.add(ps);
         List<Point> p1 = new ArrayList<>(ps);
         List<Point> p2 = new ArrayList<>(ps);
+        List<Point> p3 = new ArrayList<>(ps);
+        List<Point> p4 = new ArrayList<>(ps);
         timelines.add(p1);
         timelines.add(p2);
+        timelines.add(p3);
+        timelines.add(p4);
         reportView.setTimeLinePoints(timelines);
     }
 }
